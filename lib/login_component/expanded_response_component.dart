@@ -16,78 +16,116 @@ class ExpandedResponseComponent extends StatefulWidget {
 
 class _ExpandedResponseComponentState extends State<ExpandedResponseComponent> {
   late Map<String, dynamic> _thisResponse = {};
-  List<Object> _keys = [];
+  final List<Object> _keys = [];
 
-  List<Object> _extractKeys(Map<String, dynamic> json) {
+  extractKeys(Map<String, dynamic> json) {
     if (_keys.isEmpty) {
       json.forEach((key, value) {
         if (value != null) {
           if (value! is Map<String, dynamic>) {
             _keys.add(key);
+          } else {
+            _keys.add(key);
           }
         }
       });
     }
-    return _keys;
   }
 
   @override
   void initState() {
     _thisResponse = widget.responseObject;
-    _extractKeys(_thisResponse);
+    extractKeys(_thisResponse);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    //_extractKeys(_thisResponse);
+    //extractKeys(_thisResponse);
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Back to Origin')),
+            SizedBox(
+              width: double.infinity,
+              child: IconButton(
+                  alignment: AlignmentDirectional.centerStart,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.green,
+                  )),
+            ),
             Expanded(
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: _keys.length,
                 itemBuilder: (BuildContext context, int index1) {
-                  List<Object> _extractSubKeys(Map<String, dynamic> json) {
-                    List<Object> _subKeys = [];
+                  List<Object> extractSubKeys(Map<String, dynamic> json) {
+                    List<Object> subKeys = [];
 
-                    if (_subKeys.isEmpty) {
+                    if (subKeys.isEmpty) {
                       json.forEach((key, value) {
-                        _subKeys.add(key);
+                        subKeys.add(key);
                       });
-                      return _subKeys;
+                      return subKeys;
                     } else {
                       return [];
                     }
                   }
 
-                  return Card(
+                  bool doesFunctionError() {
+                    try {
+                      extractSubKeys(_thisResponse[_keys[index1]]).isNotEmpty;
+                      return false;
+                    } catch (e) {
+                      return true; // If an error occurs
+                    }
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(children: [
-                      Text(
-                        _keys[index1].toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      _extractSubKeys(_thisResponse[_keys[index1]]).isNotEmpty
-                          ? ListView.builder(
+                      doesFunctionError()
+                          ? Column(
+                              children: [
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Text(
+                                    '> ' + _keys[index1].toString(),
+                                    textAlign: TextAlign.start,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: Text(
+                                    '/ ' +
+                                        _thisResponse[_keys[index1]].toString(),
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount:
-                                  _extractSubKeys(_thisResponse[_keys[index1]])
+                                  extractSubKeys(_thisResponse[_keys[index1]])
                                       .length,
                               itemBuilder: (BuildContext context, int index2) {
                                 bool doesFunctionError() {
                                   try {
-                                    _extractSubKeys(_thisResponse[_keys[index1]]
-                                        [_extractSubKeys(
+                                    extractSubKeys(_thisResponse[_keys[index1]][
+                                        extractSubKeys(
                                                 _thisResponse[_keys[index1]])[
                                             index2]]);
                                     return false;
@@ -96,20 +134,59 @@ class _ExpandedResponseComponentState extends State<ExpandedResponseComponent> {
                                   }
                                 }
 
-                                return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(_extractSubKeys(
-                                                  _thisResponse[_keys[index1]])[
-                                              index2]
-                                          .toString()),
-                                      doesFunctionError()
-                                          ? Text(_thisResponse[_keys[index1]][
-                                                  _extractSubKeys(_thisResponse[
-                                                      _keys[index1]])[index2]]
-                                              .toString())
-                                          : IconButton(
+                                return doesFunctionError()
+                                    ? Column(
+                                        children: [
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: Text(
+                                              '> ' +
+                                                  extractSubKeys(_thisResponse[
+                                                              _keys[index1]])[
+                                                          index2]
+                                                      .toString(),
+                                              textAlign: TextAlign.start,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: Text(
+                                              '/ ' +
+                                                  _thisResponse[_keys[
+                                                          index1]][extractSubKeys(
+                                                              _thisResponse[
+                                                                  _keys[
+                                                                      index1]])[
+                                                          index2]]
+                                                      .toString(),
+                                              textAlign: TextAlign.start,
+                                              style: TextStyle(
+                                                  color: Colors.green),
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    : SizedBox(
+                                        width: double.infinity,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              '> ' +
+                                                  extractSubKeys(_thisResponse[
+                                                              _keys[index1]])[
+                                                          index2]
+                                                      .toString(),
+                                              textAlign: TextAlign.start,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.green),
+                                            ),
+                                            IconButton(
                                               onPressed: () {
                                                 Navigator.of(context).push(
                                                     MaterialPageRoute(
@@ -121,11 +198,15 @@ class _ExpandedResponseComponentState extends State<ExpandedResponseComponent> {
                                                                           index1]],
                                                             )));
                                               },
-                                              icon: Icon(
-                                                  Icons.arrow_circle_right)),
-                                    ]);
+                                              icon: const Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.green,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
                               })
-                          : Text(_thisResponse[_keys[index1]].toString())
                     ]),
                   );
                 },

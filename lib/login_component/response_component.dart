@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:my_clickup/login_component/expanded_response_component.dart';
 
 class MapResponseComponent extends StatefulWidget {
-  const MapResponseComponent({super.key, required this.mapResponse});
+  const MapResponseComponent(
+      {super.key, required this.mapResponse, required this.responseMessage});
   final Map<String, dynamic> mapResponse;
+  final String responseMessage;
 
   @override
   State<MapResponseComponent> createState() => _MapResponseComponentState();
@@ -11,6 +13,7 @@ class MapResponseComponent extends StatefulWidget {
 
 class _MapResponseComponentState extends State<MapResponseComponent> {
   late Map<String, dynamic> _mapResponse = {};
+  late String _responseMessage = "";
   List<String> _keys = [];
   List<String> _objectKeys = [];
 
@@ -32,6 +35,7 @@ class _MapResponseComponentState extends State<MapResponseComponent> {
   @override
   void initState() {
     _mapResponse = widget.mapResponse;
+    _responseMessage = widget.responseMessage;
     super.initState();
   }
 
@@ -40,39 +44,53 @@ class _MapResponseComponentState extends State<MapResponseComponent> {
     _extractKeys(_mapResponse);
 
     return Scaffold(
+      backgroundColor: Colors.black,
       body: SafeArea(
         child: Column(
           children: [
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Back')),
+            SizedBox(
+              width: double.infinity,
+              child: IconButton(
+                  alignment: AlignmentDirectional.centerStart,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.green,
+                  )),
+            ),
             Expanded(
               child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: _keys.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                      title: Text(
-                        _keys[index],
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      trailing: _objectKeys.contains(_keys[index])
-                          ? IconButton(
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) =>
-                                        ExpandedResponseComponent(
-                                          responseObject:
-                                              _mapResponse[_keys[index]],
-                                        )));
-                              },
-                              icon: Icon(Icons.arrow_circle_right))
-                          : SizedBox(),
-                      subtitle: _objectKeys.contains(_keys[index])
-                          ? SizedBox()
-                          : Text(_mapResponse[_keys[index]].toString()));
+                    title: Text(
+                      '> ' + _keys[index],
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.green),
+                    ),
+                    trailing: _objectKeys.contains(_keys[index])
+                        ? IconButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      ExpandedResponseComponent(
+                                        responseObject:
+                                            _mapResponse[_keys[index]],
+                                      )));
+                            },
+                            icon: Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.green,
+                            ))
+                        : SizedBox(),
+                    subtitle: _objectKeys.contains(_keys[index])
+                        ? SizedBox()
+                        : Text('/ ' + _mapResponse[_keys[index]].toString(),
+                            style: TextStyle(color: Colors.green)),
+                  );
                 },
               ),
             ),

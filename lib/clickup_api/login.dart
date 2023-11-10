@@ -48,6 +48,7 @@ class _LoginComponentState extends State<LoginComponent> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => MapResponseComponent(
                     mapResponse: _response,
+                    responseMessage: response.statusCode.toString(),
                   )));
         } else {
           setState(() {
@@ -66,6 +67,7 @@ class _LoginComponentState extends State<LoginComponent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: GestureDetector(
         onTap: () {
           _emailLoginFocusNode.unfocus();
@@ -81,43 +83,67 @@ class _LoginComponentState extends State<LoginComponent> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(_message),
+                    child: Text(
+                      '{ ' + ApiConstants.loginUrl + ' }',
+                      style: TextStyle(color: Colors.green),
+                    ),
                   ),
                   TextFormField(
                     autocorrect: false,
+                    cursorColor: Colors.green,
                     controller: _emailLoginTextController,
                     focusNode: _emailLoginFocusNode,
                     validator: (value) => Validator.validateEmail(
                       email: value,
                     ),
-                    decoration: InputDecoration(labelText: "Email Address"),
+                    style: TextStyle(color: Colors.green),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      labelText: "> Email Address",
+                      labelStyle: TextStyle(color: Colors.green),
+                    ),
                   ),
                   TextFormField(
                     autocorrect: false,
                     obscureText: true,
+                    cursorColor: Colors.green,
                     controller: _passwordLoginTextController1,
                     focusNode: _passwordLoginFocusNode1,
                     validator: (value) => Validator.validatePassword(
                       password: value,
                     ),
-                    decoration: InputDecoration(labelText: "Password"),
+                    style: TextStyle(color: Colors.green),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      labelText: "> Password",
+                      labelStyle: TextStyle(color: Colors.green),
+                    ),
                   ),
                   _isProcessing
-                      ? CircularProgressIndicator()
-                      : OutlinedButton(
-                          onPressed: () async {
-                            _emailLoginFocusNode.unfocus();
-                            _passwordLoginFocusNode1.unfocus();
+                      ? CircularProgressIndicator(
+                          color: Colors.green,
+                        )
+                      : SizedBox(
+                          width: double.infinity,
+                          child: IconButton(
+                              alignment: Alignment.centerRight,
+                              onPressed: () async {
+                                _emailLoginFocusNode.unfocus();
+                                _passwordLoginFocusNode1.unfocus();
 
-                            if (_loginFormKey.currentState!.validate()) {
-                              setState(() {
-                                _isProcessing = true;
-                              });
-                              await Login(_emailLoginTextController.text,
-                                  _passwordLoginTextController1.text);
-                            }
-                          },
-                          child: Text("Login"))
+                                if (_loginFormKey.currentState!.validate()) {
+                                  setState(() {
+                                    _isProcessing = true;
+                                  });
+                                  await Login(_emailLoginTextController.text,
+                                      _passwordLoginTextController1.text);
+                                }
+                              },
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.green,
+                              )),
+                        )
                 ],
               ),
             ),
