@@ -48,7 +48,6 @@ class _LoginComponentState extends State<LoginComponent> {
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => MapResponseComponent(
                     mapResponse: _response,
-                    responseMessage: response.statusCode.toString(),
                   )));
         } else {
           setState(() {

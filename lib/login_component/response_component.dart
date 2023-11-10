@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_clickup/login_component/expanded_response_component.dart';
 
 class MapResponseComponent extends StatefulWidget {
-  const MapResponseComponent(
-      {super.key, required this.mapResponse, required this.responseMessage});
+  const MapResponseComponent({super.key, required this.mapResponse});
   final Map<String, dynamic> mapResponse;
-  final String responseMessage;
 
   @override
   State<MapResponseComponent> createState() => _MapResponseComponentState();
@@ -13,7 +11,6 @@ class MapResponseComponent extends StatefulWidget {
 
 class _MapResponseComponentState extends State<MapResponseComponent> {
   late Map<String, dynamic> _mapResponse = {};
-  late String _responseMessage = "";
   List<String> _keys = [];
   List<String> _objectKeys = [];
 
@@ -35,7 +32,6 @@ class _MapResponseComponentState extends State<MapResponseComponent> {
   @override
   void initState() {
     _mapResponse = widget.mapResponse;
-    _responseMessage = widget.responseMessage;
     super.initState();
   }
 
